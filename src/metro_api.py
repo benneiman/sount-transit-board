@@ -1,4 +1,5 @@
 import board
+from typing import List
 from datetime import datetime
 from adafruit_matrixportal.network import Network
 
@@ -14,16 +15,16 @@ class MetroApiOnFireException(Exception):
 
 
 class MetroApi:
-    def fetch_train_predictions(station_code: str, group: str) -> [dict]:
-        return MetroApi._fetch_train_predictions(station_code, group, retry_attempt=0)
+    def fetch_train_predictions(station_code: str) -> List[dict]:
+        return MetroApi._fetch_train_predictions(station_code, retry_attempt=0)
 
-    def _fetch_train_predictions(
-        station_code: str, group: str, retry_attempt: int
-    ) -> [dict]:
+    def _fetch_train_predictions(station_code: str, retry_attempt: int) -> List[dict]:
         try:
-            api_url = config["ps_api_url"].format(stop_id=config["ps_stop_id"])
+            api_url = config["metro_api_url"].format(
+                stop_id=config["metro_station_code"]
+            )
             train_data = _network.fetch(
-                api_url, params={"key": config["ps_api_key"]}
+                api_url, params={"key": config["metro_api_key"]}
             ).json()
 
             print("Received response from OneBusAway api...")
@@ -38,7 +39,7 @@ class MetroApi:
                 print("Failed to connect to WMATA API. Reattempting...")
                 # Recursion for retry logic because I don't care about your stack
                 return MetroApi._fetch_train_predictions(
-                    station_code, group, retry_attempt + 1
+                    station_code, retry_attempt + 1
                 )
             else:
                 raise MetroApiOnFireException()

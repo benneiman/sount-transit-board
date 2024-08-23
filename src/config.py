@@ -12,17 +12,17 @@ config = {
     # Metro Configuration   #
     #########################
     # Metro Station Code
-    "ps_stop_id": "1_8250",
+    "metro_station_code": "1_8250",
     # Metro Train Group
     # "train_group": "2",
     # API Key for WMATA
-    "ps_api_key": "<Your WMATA API Key>",
+    "metro_api_key": "<Your WMATA API Key>",
     #########################
     # Other Values You      #
     # Probably Shouldn't    #
     # Touch                 #
     #########################
-    "ps_api_url": "https://api.pugetsound.onebusaway.org/api/where/arrivals-and-departures-for-stop/{stop_id}.json",
+    "metro_api_url": "https://api.pugetsound.onebusaway.org/api/where/arrivals-and-departures-for-stop/{stop_id}.json",
     "metro_api_retries": 2,
     "refresh_interval": 5,  # 5 seconds is a good middle ground for updates, as the processor takes its sweet ol time
     # Display Settings
