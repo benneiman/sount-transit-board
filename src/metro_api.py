@@ -1,6 +1,6 @@
 import board
-from typing import List
-from datetime import datetime
+
+from adafruit_datetime import datetime
 from adafruit_matrixportal.network import Network
 
 from config import config
@@ -15,10 +15,10 @@ class MetroApiOnFireException(Exception):
 
 
 class MetroApi:
-    def fetch_train_predictions(station_code: str) -> List[dict]:
+    def fetch_train_predictions(station_code: str) -> [dict]:
         return MetroApi._fetch_train_predictions(station_code, retry_attempt=0)
 
-    def _fetch_train_predictions(station_code: str, retry_attempt: int) -> List[dict]:
+    def _fetch_train_predictions(station_code: str, retry_attempt: int) -> [dict]:
         try:
             api_url = config["metro_api_url"].format(
                 stop_id=config["metro_station_code"]
