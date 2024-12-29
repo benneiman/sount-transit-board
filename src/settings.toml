@@ -1,2 +1,5 @@
 CIRCUITPY_WIFI_SSID = "wifi name"
 CIRCUITPY_WIFI_PASSWORD = "wifi password"
+AIO_USERNAME = ""
+AIO_PASSWORD = ""
+TIMEZONE = "America/Los_Angeles"
