@@ -6,7 +6,7 @@ from adafruit_matrixportal.network import Network
 from config import config
 from secrets import secrets
 
-# Keeping a global reference for this
+# Keeping a global reference for thi
 _network = Network(status_neopixel=board.NEOPIXEL)
 
 
@@ -18,50 +18,54 @@ class MetroApi:
     def fetch_train_predictions(station_code: str) -> [dict]:
         return MetroApi._fetch_train_predictions(station_code, retry_attempt=0)
 
-    def _fetch_train_predictions(station_code: str, retry_attempt: int) -> [dict]:
-        return MetroApi._normalize_train_response({"fake": "test"})
-        # try:
-        #     api_url = (
-        #         config["metro_api_url"]
-        #         + station_code
-        #         + ".json"
-        #         + "?key="
-        #         + config["metro_api_key"]
-        #     )
-        #     train_data = _network.fetch(api_url).json()
+    def _fetch_train_predictions(
+        station_code: str, group: str, retry_attempt: int
+    ) -> [dict]:
+        try:
+            api_url = (
+                config["oba_api_url"]
+                + config["metro_station_code"]
+                + ".json?key="
+                + config["oba_api_key"]
+            )
+            req = _network.fetch(api_url)
+            print(api_url)
 
-        #     print("Received response from OneBusAway api...")
+            train_data = req.json()
 
-        #     trains = train_data["data"]["entry"]["arrivalsAndDepartures"]
+            #     print("Received response from OneBusAway api...")
 
-        #     normalized_results = list(map(MetroApi._normalize_train_response, trains))
+            #     trains = train_data["data"]["entry"]["arrivalsAndDepartures"]
 
-        #     return normalized_results
-        # except RuntimeError:
-        #     if retry_attempt < config["metro_api_retries"]:
-        #         print("Failed to connect to WMATA API. Reattempting...")
-        #         # Recursion for retry logic because I don't care about your stack
-        #         return MetroApi._fetch_train_predictions(
-        #             station_code, retry_attempt + 1
-        #         )
-        #     else:
-        #         raise MetroApiOnFireException()
+            normalized_results = list(
+                map(
+                    lambda x: MetroApi._normalize_train_response(
+                        x, train_data["currentTime"]
+                    ),
+                    trains,
+                )
+            )
 
-    def arrival_minutes(epoch: str) -> int:
-        epoch_s = int(epoch) / 1000
-        diff = epoch_s - time()
-        return diff // 60
+            return [x for x in normalized_results if x.get("arrival") > 0]
+        except RuntimeError:
+            if retry_attempt < config["metro_api_retries"]:
+                print("Failed to connect to WMATA API. Reattempting...")
+                # Recursion for retry logic because I don't care about your stack
+                return MetroApi._fetch_train_predictions(
+                    station_code, group, retry_attempt + 1
+                )
+            else:
+                raise MetroApiOnFireException()
 
-    def _normalize_train_response(train: dict) -> dict:
-        return {"line": 0x00FF00, "destination": "bens butt", "arrival": 10}
-        # line = 0x00FF00  # train["routeShortName"]
-        # destination = train["tripHeadsign"]
-        # arrival = train["predictedArrivalTime"]
-        # return dict(
-        #     line=line,
-        #     destination=destination,
-        #     arrival=MetroApi.arrival_minutes(arrival),
-        # )
+    def _normalize_train_response(train: dict, current_time: int) -> dict:
+        line = 0x00FF00  # train["routeShortName"]
+        destination = train["tripHeadsign"]
+        arrival = (train["predictedArrivalTime"] - current_time) // 60000
+        return dict(
+            line_color=line,
+            destination=destination,
+            arrival=arrival,  # MetroApi.arrival_minutes(arrival),
+        )
 
     def _get_line_color(line: str) -> int:
         if line == "RD":

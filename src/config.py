@@ -5,26 +5,26 @@ config = {
     # Network Configuration #
     #########################
     # WIFI Network SSID
-    "wifi_ssid": "<Your 2.4ghz WiFi SSID>",
+    "wifi_ssid": "wifi router",
     # WIFI Password
-    "wifi_password": "<Your WiFi Password>",
+    "wifi_password": "wifi password",
     #########################
     # Metro Configuration   #
     #########################
     # Metro Station Code
-    "metro_station_code": "1_8250",
+    "metro_station_code": "40_55778",
     # Metro Train Group
-    # "train_group": "2",
+    "train_group": "2",
     # API Key for WMATA
-    "metro_api_key": "<Your WMATA API Key>",
+    "oba_api_key": "api-key",
     #########################
     # Other Values You      #
     # Probably Shouldn't    #
     # Touch                 #
     #########################
-    "metro_api_url": "https://api.pugetsound.onebusaway.org/api/where/arrivals-and-departures-for-stop/",
+    "oba_api_url": "https://api.pugetsound.onebusaway.org/api/where/arrivals-and-departures-for-stop/",
     "metro_api_retries": 2,
-    "refresh_interval": 5,  # 5 seconds is a good middle ground for updates, as the processor takes its sweet ol time
+    "refresh_interval": 30,  # 5 seconds is a good middle ground for updates, as the processor takes its sweet ol time
     # Display Settings
     "matrix_width": 64,
     "num_trains": 3,
