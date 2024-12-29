@@ -22,7 +22,7 @@ config = {
     # Probably Shouldn't    #
     # Touch                 #
     #########################
-    "metro_api_url": "https://api.pugetsound.onebusaway.org/api/where/arrivals-and-departures-for-stop/{stop_id}.json",
+    "metro_api_url": "https://api.pugetsound.onebusaway.org/api/where/arrivals-and-departures-for-stop/",
     "metro_api_retries": 2,
     "refresh_interval": 5,  # 5 seconds is a good middle ground for updates, as the processor takes its sweet ol time
     # Display Settings

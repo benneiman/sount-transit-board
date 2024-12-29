@@ -1,6 +1,6 @@
 import board
 
-from adafruit_datetime import datetime
+from time import time
 from adafruit_matrixportal.network import Network
 
 from config import config
@@ -19,45 +19,49 @@ class MetroApi:
         return MetroApi._fetch_train_predictions(station_code, retry_attempt=0)
 
     def _fetch_train_predictions(station_code: str, retry_attempt: int) -> [dict]:
-        try:
-            api_url = config["metro_api_url"].format(
-                stop_id=config["metro_station_code"]
-            )
-            train_data = _network.fetch(
-                api_url, params={"key": config["metro_api_key"]}
-            ).json()
+        return MetroApi._normalize_train_response({"fake": "test"})
+        # try:
+        #     api_url = (
+        #         config["metro_api_url"]
+        #         + station_code
+        #         + ".json"
+        #         + "?key="
+        #         + config["metro_api_key"]
+        #     )
+        #     train_data = _network.fetch(api_url).json()
 
-            print("Received response from OneBusAway api...")
+        #     print("Received response from OneBusAway api...")
 
-            trains = train_data["data"]["entry"]["arrivalsAndDepartures"]
+        #     trains = train_data["data"]["entry"]["arrivalsAndDepartures"]
 
-            normalized_results = list(map(MetroApi._normalize_train_response, trains))
+        #     normalized_results = list(map(MetroApi._normalize_train_response, trains))
 
-            return normalized_results
-        except RuntimeError:
-            if retry_attempt < config["metro_api_retries"]:
-                print("Failed to connect to WMATA API. Reattempting...")
-                # Recursion for retry logic because I don't care about your stack
-                return MetroApi._fetch_train_predictions(
-                    station_code, retry_attempt + 1
-                )
-            else:
-                raise MetroApiOnFireException()
+        #     return normalized_results
+        # except RuntimeError:
+        #     if retry_attempt < config["metro_api_retries"]:
+        #         print("Failed to connect to WMATA API. Reattempting...")
+        #         # Recursion for retry logic because I don't care about your stack
+        #         return MetroApi._fetch_train_predictions(
+        #             station_code, retry_attempt + 1
+        #         )
+        #     else:
+        #         raise MetroApiOnFireException()
 
     def arrival_minutes(epoch: str) -> int:
         epoch_s = int(epoch) / 1000
-        diff = epoch_s - int(datetime.now().strftime("%s"))
+        diff = epoch_s - time()
         return diff // 60
 
     def _normalize_train_response(train: dict) -> dict:
-        line = 0x00FF00  # train["routeShortName"]
-        destination = train["tripHeadsign"]
-        arrival = train["predictedArrivalTime"]
-        return dict(
-            line=line,
-            destination=destination,
-            arrival=MetroApi.arrival_minutes(arrival),
-        )
+        return {"line": 0x00FF00, "destination": "bens butt", "arrival": 10}
+        # line = 0x00FF00  # train["routeShortName"]
+        # destination = train["tripHeadsign"]
+        # arrival = train["predictedArrivalTime"]
+        # return dict(
+        #     line=line,
+        #     destination=destination,
+        #     arrival=MetroApi.arrival_minutes(arrival),
+        # )
 
     def _get_line_color(line: str) -> int:
         if line == "RD":
