@@ -35,7 +35,7 @@ class MetroApi:
 
             #     print("Received response from OneBusAway api...")
 
-            #     trains = train_data["data"]["entry"]["arrivalsAndDepartures"]
+            trains = train_data["data"]["entry"]["arrivalsAndDepartures"]
 
             normalized_results = list(
                 map(
